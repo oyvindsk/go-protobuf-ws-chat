@@ -6,8 +6,10 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/golang/protobuf/proto"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
+
 	"github.com/oyvindsk/go-protobuf-ws-chat/lib/message"
 )
 
@@ -53,6 +55,13 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 		log.Println("Killing connection to client: Error above")
 		return
 	}
+
+	// Nice! Switch to proto3
+	msg := message.ChatMessage{}
+	msgtype, data, err := ws.ReadMessage()
+	proto.Unmarshal(data, &msg)
+
+	log.Printf("GOT: %+v\n%T", msg, msg)
 
 	log.Println("Killing connection to client: EOF")
 }
