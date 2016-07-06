@@ -1,0 +1,14 @@
+https://www.kirsle.net/wiki/Protocol-Buffers-Protocol
+
+https://github.com/Anxuiz/Simple-ENet-Chat-Client/blob/master/Protocol.proto
+
+>> YO 1 // latest supported version
+<< OY 1 // ditto
+>> OK
+
+Message types:
+- register nick
+- join room
+- leave room
+- disconect 
+- chat mesagen
