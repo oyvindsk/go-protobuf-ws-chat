@@ -15,11 +15,12 @@ import (
 
 func main() {
 
-	fmt.Println(message.MessageType_JOINROOM)
+	//fmt.Println(message.MessageType_JOINROOM)
 
 	r := mux.NewRouter()
 	r.HandleFunc("/ws", handleWebsocket)
 
+	fmt.Println("Listening..")
 	err := http.ListenAndServe(":8080", r)
 
 	if err != nil {
@@ -57,11 +58,15 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Nice! Switch to proto3
-	msg := message.ChatMessage{}
+	msg := message.Message_ChatMessage{}
 	msgtype, data, err := ws.ReadMessage()
-	proto.Unmarshal(data, &msg)
+	err = proto.Unmarshal(data, &msg)
 
-	log.Printf("GOT: %+v\n%T", msg, msg)
+	log.Printf("GOT: %+v\n%T\n", msg, msg)
+	log.Printf("Err: %s\n%#v\n", err, err)
+
+	//switch msg.(type) {
+	//}
 
 	log.Println("Killing connection to client: EOF")
 }

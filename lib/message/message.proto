@@ -20,9 +20,19 @@ package message;
 //     CHATMESSAGE = 4;
 // }
 
-message ChatMessage {
-    // MessageType messagetype = 1;
+// Have different types and use "bytes" to include them in one message .. ?
+// https://developers.google.com/protocol-buffers/docs/proto3
+// https://github.com/Anxuiz/Simple-ENet-Chat-Client/blob/master/Protocol.proto
+// OR pad with our own data before the pb data: 
+// https://www.kirsle.net/wiki/Protocol-Buffers-Protocol 
+
+message Message {
     string from = 1;
-    string to = 2;
-    string data = 3;
+    int32 foo = 2;
+    message ChatMessage {
+        // MessageType messagetype = 1;
+        string from = 1;
+        string to = 2;
+        string data = 3;
+    } 
 }

@@ -34,7 +34,9 @@ func main() {
 	wsMustWriteStr(ws, msgtype, "OK")
 
 	// Nice! Switch to proto3
-	msg := message.ChatMessage{}
+	msg := message.Message{}
+	msg.From = "Ole"
+	msg.Foo = 44
 	data, err := proto.Marshal(&msg)
 	wsMustWrite(ws, msgtype, data)
 
