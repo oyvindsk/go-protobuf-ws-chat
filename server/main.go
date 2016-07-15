@@ -58,15 +58,28 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Nice! Switch to proto3
-	msg := message.Message_ChatMessage{}
+	msg := message.Message{}
 	msgtype, data, err := ws.ReadMessage()
 	err = proto.Unmarshal(data, &msg)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	log.Printf("GOT: %+v\n%T\n", msg, msg)
 	log.Printf("Err: %s\n%#v\n", err, err)
 
-	//switch msg.(type) {
-	//}
+	switch msg.Type {
+	case message.MessageType_CHATMESSAGE:
+		log.Println("chatmmesage!")
+		msg2 := message.ChatMessage{}
+		err = proto.Unmarshal(msg.Content, &msg2)
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Printf("from: %s\nto: %s\ndata: %s\n", msg2.From, msg2.To, msg2.Data)
+	default:
+		log.Println("Unknow type seen, discarded")
+	}
 
 	log.Println("Killing connection to client: EOF")
 }

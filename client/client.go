@@ -35,9 +35,21 @@ func main() {
 
 	// Nice! Switch to proto3
 	msg := message.Message{}
-	msg.From = "Ole"
-	msg.Foo = 44
+	msg.Type = message.MessageType_CHATMESSAGE
+
+	chat := message.ChatMessage{}
+	chat.From = "Ole"
+	chat.To = "Petter"
+	chat.Data = "hallo hallo hallo =)"
+
+	chatBytes, err := proto.Marshal(&chat)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	msg.Content = chatBytes
 	data, err := proto.Marshal(&msg)
+
 	wsMustWrite(ws, msgtype, data)
 
 }
