@@ -11,4 +11,111 @@ Message types:
 - join room
 - leave room
 - disconect 
-- chat mesagen
+- chat message (from client to room / from room to client)
+
+
+cd lib\message
+..\..\protoc\protoc.exe message.proto --go_out .
+
+
+Chat:
+
+0 or more Rooms
+0 or more Clients
+Chat to a room goes to all clients in the room
+
+Protocol:
+
+Client stattes:
+0: Disconnected
+1: Connected
+2: Handshaked
+3: Registered
+
+In state 3 the Client can join/leave rooms and send messages. 
+Only allowed next state is 0.
+
+From state 2 and onwards we use protobuf3.
+
+Client states, globally (or per server on the client itself):
+Go to the next state on success. Stay in the same state on failure
+
+                    Disconnected    Connected       Handshaked      Registered
+Connect to s.       Connected       --              --              --
+Handshake           --              Handshaked      --              --
+Register Nick       --              --              Registred       Registred (new nick)
+Disconnect          --              Disconnected    Disconnected    Disconnected
+
+Client states, per room:
+                    Out             Joined
+Join                Joined          --
+Leave               --              Out
+
+(todo: State Away)
+
+
+Client          Server
+        --> WS Connect 
+        (1)
+        
+        <-> Handshake (non protobuf)
+        (2)
+
+        --> Register Nick
+        <-- OK / Err
+        Iff Err: Redo register / give up
+        Iff OK: Nothing
+        (3)
+
+	    --> Join Room
+        <-- OK/Error
+        Iff Err: Redo / give up
+        Iff OK: 
+            Client receives messages from room
+            Client can send messages to room
+            Client can leave room
+
+        --> Leave Room
+        <-- OK/Error
+        Iff Err: Redo / give up
+        Iff OK:
+            Client can no longer send/recieve from room
+
+        --> Send MSG
+        <-- OK / Error
+        Iff Err: Tell human
+        Iff Ok: 
+            Send to room, room sends to all connected
+
+        <-- Send MSG
+        Tell human
+        --> OK / Error
+        Iff Err: 
+            Retry
+            Give up
+            Consider disconnecting client back to 0
+        Iff OK: Nothing
+
+
+        --> Disconnect
+        Leave all rooms for client
+        <-- OK / Err
+        Set state 0 for client
+
+        Iff OK: Set state 0
+        Iff Err:
+            Retry
+            Tell human
+
+
+
+
+State:
+https://play.golang.org/p/8GRiralhtf
+
+https://play.golang.org/p/LbMkQJUnFb
+https://www.crumpington.com/blog/2014/10-09-golang-state-machine-benchmarks.html
+https://play.golang.org/p/uMvbpnN9X9
+https://news.ycombinator.com/item?id=5196689
+
+https://en.wikipedia.org/wiki/Event-driven_finite-state_machine
