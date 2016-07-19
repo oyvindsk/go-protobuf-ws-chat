@@ -32,8 +32,22 @@ message Message {
     bytes content = 2;
 }
 
+message RegisterNick  {
+    string nick = 1 ;
+}
+
+message JoinRoom {
+    string room = 1 ;
+}
+
+message LeaveRoom {
+    string room = 1 ;
+}
+
+message Disconnect {
+}
+
 message ChatMessage {
-    // MessageType messagetype = 1;
     string from = 1;
     string to = 2;
     string data = 3;

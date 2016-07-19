@@ -26,7 +26,7 @@ Chat to a room goes to all clients in the room
 
 Protocol:
 
-Client stattes:
+Client states:
 0: Disconnected
 1: Connected
 2: Handshaked
@@ -45,6 +45,9 @@ Connect to s.       Connected       --              --              --
 Handshake           --              Handshaked      --              --
 Register Nick       --              --              Registred       Registred (new nick)
 Disconnect          --              Disconnected    Disconnected    Disconnected
+Join Room           --              --              --              Registred (joined room)
+Leave Room          --              --              --              Registred (left room)
+Chat Mesage         --              --              --              Registred (sent/recevived msg)
 
 Client states, per room:
                     Out             Joined

@@ -65,21 +65,22 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	log.Printf("GOT: %+v\n%T\n", msg, msg)
-	log.Printf("Err: %s\n%#v\n", err, err)
-
+	// we expect the first msg to be Register
 	switch msg.Type {
-	case message.MessageType_CHATMESSAGE:
-		log.Println("chatmmesage!")
-		msg2 := message.ChatMessage{}
-		err = proto.Unmarshal(msg.Content, &msg2)
+	case message.MessageType_REGISTERNICK:
+		reg := message.RegisterNick{}
+		err = proto.Unmarshal(msg.Content, &reg)
 		if err != nil {
 			log.Fatal(err)
 		}
-		log.Printf("from: %s\nto: %s\ndata: %s\n", msg2.From, msg2.To, msg2.Data)
+		log.Printf("Registering: %s", reg.Nick)
 	default:
-		log.Println("Unknow type seen, discarded")
+		log.Fatal("Register expected. got:", msg.Type)
+
 	}
+
+	log.Printf("GOT: %+v\n%T\n", msg, msg)
+	log.Printf("Err: %s\n%#v\n", err, err)
 
 	log.Println("Killing connection to client: EOF")
 }
